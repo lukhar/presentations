@@ -13,6 +13,12 @@ Unit Tests: The Good, The Bad and The Ugly
 What I'll be talking about...
 =============================
 
+* my observations on how to make your tests easier to read/maintain
+
+* few words about most common bad habits when unit testing
+
+* summarize how the proper unit test should look like
+
 ----
 
 Can you tell what exactly I’m testing here?
@@ -127,7 +133,7 @@ Yeah I know it looks nice on paper but quite often we have to deal with this...
 
                 return tracks
 
-but in much more complicated form of course ;)
+but in much more elaborated form of course ;)
 
 ----
 
@@ -148,7 +154,7 @@ Setting up test environment
 pros:
     + tests are independent of tested class/module implementation
 cons:
-    - but became depend of environment (ex. used database)
+    - tests became dependent on environment (ex. used database)
     - tests tend to be slow and complicated
     - to sum up we’re creating not unit but integration tests...
 
@@ -361,7 +367,7 @@ Walking happy path
         assert_equals(2, divide(4,2))
         assert_equals(-3, divide(-9,3))
 
-Sooner or later someone tries to divide by zero it would be good to have this case covered.
+Sooner or later someone tries to divide by zero so... it would be good to have this case covered.
 
 
 ----
@@ -369,7 +375,7 @@ Sooner or later someone tries to divide by zero it would be good to have this ca
 To wrap up... a good unit test
 ==============================
 
-* test functionality not implementation
+* tests functionality not implementation
 
 * tests single behavior
 
@@ -380,3 +386,8 @@ To wrap up... a good unit test
 * documents expected behavior
 
 * runs quickly
+
+----
+
+Thank you
+=========
