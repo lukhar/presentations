@@ -29,17 +29,17 @@ Let's start with simple things...
     /**
      * @author lukasz
      */
-    public class TrackInfoLinkManagementControllerTest {
+    public class TrackLinkManagementControllerTest {
 
         public static final long ALBUM_ID = 1234567893058L;
 
-        private TrackInfoLinkManagementService service;
-        private TrackInfoLinkManagementController controller;
+        private TrackLinkManagementService service;
+        private TrackLinkManagementController controller;
 
         @Before
         public setUp() {
-            service = mock(TrackInfoLinkManagementService.class);
-            controller = new TrackInfoLinkManagementController(service);
+            service = mock(TrackLinkManagementService.class);
+            controller = new TrackLinkManagementController(service);
         }
 
        /**********
@@ -47,17 +47,17 @@ Let's start with simple things...
         **********/
 
         @Test
-        public void canAddTrackInfo() throws RestApiClientErrorException {
+        public void canAddTrackLink() throws RestApiClientErrorException {
             String trackId = "xxx-1234";
             boolean active = false;
-            TrackInfo trackInfo = new TrackInfo(ALBUM_ID, trackId);
-            trackInfo.setActive(active);
-            CreateTrackInfoLinkCommand command = 
-                new CreateTrackInfoLinkCommand(ALBUM_ID, trackId, active);
-            final TrackInfoResponse response = mock(TrackInfoResponse.class);
-            when(service.addTrackInfoLink(trackInfo)).thenReturn(response);
-            assertThat(controller.addTrackInfoLink(command), is(response));
-            verify(service).addTrackInfoLink(trackInfo);
+            TrackLink trackLink = new TrackLink(ALBUM_ID, trackId);
+            trackLink.setActive(active);
+            CreateTrackLinkCommand command = 
+                new CreateTrackLinkCommand(ALBUM_ID, trackId, active);
+            final TrackLink response = mock(TrackLinkResponse.class);
+            when(service.addTrackLink(trackLink)).thenReturn(response);
+            assertThat(controller.addTrackLink(command), is(response));
+            verify(service).addTrackLink(trackLink);
         }
     }
 
@@ -78,35 +78,35 @@ Let's try to remove some of this clutter
 ========================================
 .. code:: java
 
-    public class TrackInfoLinkManagementControllerTest {
+    public class TrackLinkManagementControllerTest {
 
         public static final long ALBUM_ID = 1234567893058L;
 
-        private TrackInfoLinkManagementService service;
-        private TrackInfoLinkManagementController controller;
+        private TrackLinkManagementService service;
+        private TrackLinkManagementController controller;
 
         @Before
         public setUp() {
-            service = mock(TrackInfoLinkManagementService.class);
-            controller = new TrackInfoLinkManagementController(service);
+            service = mock(TrackLinkManagementService.class);
+            controller = new TrackLinkManagementController(service);
         }
 
         @Test
-        public void canAddTrackInfo() throws RestApiClientErrorException {
+        public void canAddTrackLink() throws RestApiClientErrorException {
             String trackId = "xxx-1234";
             boolean active = false;
-            TrackInfo trackInfo = new TrackInfo(ALBUM_ID, trackId);
-            trackInfo.setActive(active);
+            TrackLink trackLink = new TrackLink(ALBUM_ID, trackId);
+            trackLink.setActive(active);
 
-            CreateTrackInfoLinkCommand command = 
-                new CreateTrackInfoLinkCommand(ALBUM_ID, trackId, active);
-            TrackInfoResponse response = mock(TrackInfoResponse.class);
-            when(service.addTrackInfoLink(trackInfo)).thenReturn(response);
+            CreateTrackLinkCommand command = 
+                new CreateTrackLinkCommand(ALBUM_ID, trackId, active);
+            TrackLinkResponse response = mock(TrackLinkResponse.class);
+            when(service.addTrackLink(trackLink)).thenReturn(response);
             
-            controllerResponse = controller.addTrackInfoLink(command)
+            controllerResponse = controller.addTrackLink(command)
 
             assertThat(controllerResponse, is(response));
-            verify(service).addTrackInfoLink(trackInfo);
+            verify(service).addTrackLink(trackLink);
         }
     }
 
@@ -118,9 +118,9 @@ Not much of the help huh? True but we start to notice more now...
 For example this fragment is not neccessary (and you don't even have to look into implementation):
     .. code-block:: java
 
-        TrackInfoResponse response = mock(TrackInfoResponse.class);
-        when(service.addTrackInfoLink(trackInfo)).thenReturn(response);
+        TrackLinkResponse response = mock(TrackLinkResponse.class);
+        when(service.addTrackLink(trackLink)).thenReturn(response);
 
         assertThat(controllerResponse, is(response));
 
-Moreover we can notice the connection between `trackInfo` and `command`
+Moreover we can notice the connection between `trackLink` and `command`
