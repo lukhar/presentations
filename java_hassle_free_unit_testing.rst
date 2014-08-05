@@ -26,35 +26,45 @@ Let's start with simple things...
 
 .. code:: java
 
-    public class ProfileServiceTest {
+    /**
+     * @author lukasz
+     */
+    public class TrackInfoLinkManagementControllerTest {
 
-        private ProfileRepository profileRepositoryMock;
-        private UserRepository userRepertoryMock;
-        private ProfileService profileService;
+        public static final long ALBUM_ID = 1234567893058L;
+
+        private TrackInfoLinkManagementService service;
+        private TrackInfoLinkManagementController controller;
 
         @Before
-        public void setUp() {
-           profileRepositoryMock = new mock(ProfileRepository.class);
-           userRepertoryMock = new mock(userRepertoryMock.class);
-           profileService = new ProfileService(profileRepositoryMock, userRepertoryMock)
+        public setUp() {
+            service = mock(TrackInfoLinkManagementService.class);
+            controller = new TrackInfoLinkManagementController(service);
         }
+
+       /**********
+        *  ADD   *
+        **********/
 
         @Test
-        public void shouldNotCreateProfileWhenOneExistsInRepository() {
-            // given
-            User existingUser = User()
-            exitingUser.setUserId("axf2345adf")
-
-            Profile profileEntity = newProfile()
-                    .withUser(existingUser)
-                    .build();
-            given(profileRepositoryMock.findByUserUserId(EXISTING_USER_ID))
-                    .willReturn(profileEntity);
-
-            // when
-            Profile profile = profileService.createProfileForUser(existingUser);
-
-            // then
-            assertThat(profile.getUser()).isEqualTo(existingUser);
+        public void canAddTrackInfo() throws RestApiClientErrorException {
+            String trackId = "xxx-1234";
+            boolean active = false;
+            TrackInfo trackInfo = new TrackInfo(ALBUM_ID, trackId);
+            trackInfo.setActive(active);
+            CreateTrackInfoLinkCommand command = 
+                new CreateTrackInfoLinkCommand(ALBUM_ID, trackId, active);
+            final TrackInfoResponse response = mock(TrackInfoResponse.class);
+            when(service.addTrackInfoLink(trackInfo)).thenReturn(response);
+            assertThat(controller.addTrackInfoLink(command), is(response));
+            verify(service).addTrackInfoLink(trackInfo);
         }
     }
+
+----
+
+Few things I've noticed
+=======================
+
+* obsolete comments: "Add"?, if i'd like to know who is the author I just invoke git-blame...
+* mock returning mock brrr...  
