@@ -349,7 +349,7 @@ Faking it with Mockito
 
 * use :code:`MockitoJUnitRunner`, :code:`InjectMocks` and :code:`Mock` annotations, most of the time you (really) don't need :code:`setUp`, :code:`tearDown` methods
 
-* :code:`Mock` annotation alone doesn't give you anything... (seen few usages in our code)
+* :code:`Mock` annotation alone doesn't give you all that much... (seen few usages in our code)
 
 * two styles of stubbing:
     * traditional: :code:`when`, :code:`thenReturn`, :code:`thenThrow`
@@ -368,17 +368,59 @@ From Mockito site:
   
     .. code:: java
        
-        BankService servieStub = mock(BankService.class) 
-        given(servieStub.getBalanceForCustomer("Lukasz")).willReturn("-10$")
+        BankService serviceStub = mock(BankService.class) 
+        given(serviceStub.getBalanceForCustomer("Lukasz")).willReturn("-10$")
 
 * mock example:
     
     .. code:: java
        
         BankService serviceMock = mock(BankService.class) 
-        verify(servieStub).getBalanceForCustomer("Lukasz")
+        verify(serviceMock).getBalanceForCustomer("Lukasz")
+
+As you can see difference lays only in usage patterns.
 
 ----
+
+Ok but when to mock/stub?
+=========================
+
+General guidelines are:
+
+* *Mock across architecturally significant boundaries, but not within those boundaries.* Uncle Bob
+
+* Mock only the code you have full control off.
+
+* **Never** mock value objects.
+
+----
+
+It usally comes down to this
+============================
+
+.. image:: images/hexagonal_architecture_sketch.jpg
+
+----
+
+My rule of thumb...
+===================
+
+When in order to setup your test scenario you need:
+
+     .. code:: java
+
+          RadioStation station = new RadioStation.Builder()
+            .withId("s9")
+            .withName("station")
+            .withDescription("description")
+            .withImage(image_)
+            .withCreator(user_)
+            .withSeeds(Collections.<String>emptyList())
+            .withSearchable(false)
+            .withUserCreated(false)
+            .create();
+
+and only few of those properties are relevat for the test and yet *all* of them are needed... You *probably* have some functionally to abstract (and stub).
 
 Hamcrest vs FEST-Assert - functionally they're both the same 
 =============================================================
