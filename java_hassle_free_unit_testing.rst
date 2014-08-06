@@ -421,9 +421,35 @@ When in order to setup your test scenario you need:
             .withUserCreated(false)
             .create();
 
-and only few of those properties are relevat for the test and yet *all* of them are needed... You *probably* have some functionally to abstract (and stub).
+and *only few* of those properties are relevant for the test and yet *all* of them are needed... You *probably* have some functionally to abstract (and stub).
 
 ----
+
+It usally comes down to this
+============================
+
+.. image:: images/hexagonal_architecture_sketch.jpg
+
+----
+
+My rule of thumb...
+===================
+
+When in order to setup your test scenario you need:
+
+     .. code:: java
+      RadioStation station = new RadioStation.Builder()
+        .withId("s9")
+        .withName("station")
+        .withDescription("description")
+        .withImage(image_)
+        .withCreator(user_)
+        .withSeeds(Collections.<String>emptyList())
+        .withSearchable(false)
+        .withUserCreated(false)
+        .create();
+
+and only few of those properties are relevant for the test and yet *all* of them are needed... You *probably* have some functionally to abstract (and stub).
 
 Hamcrest vs FEST-Assert - functionally they're both the same 
 =============================================================
