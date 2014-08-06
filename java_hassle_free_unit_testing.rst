@@ -66,9 +66,9 @@ Let's start with simple things...
 Few things I've noticed
 =======================
 
-* hard to figure out what is behaviour is actually tested (everything is clattered, variable names are verbose but not descriptive...)
+* hard to figure out what behaviour is actually tested (everything is clattered, variable names are verbose but not descriptive...)
 
-* obsolete comments ("Add", "author") *there's git for that...*
+* obsolete comments ("Add", "author"?  *there's git for that...*)
 
 * mock returning mock brrr...  
 
@@ -105,6 +105,7 @@ Let's try to remove some of this clutter
             CreateTrackLinkCommand command = 
                 new CreateTrackLinkCommand(ALBUM_ID, trackId, active);
             TrackLinkResponse response = mock(TrackLinkResponse.class);
+
             when(service.addTrackLink(trackLink)).thenReturn(response);
             
             controllerResponse = controller.addTrackLink(command)
@@ -422,6 +423,8 @@ When in order to setup your test scenario you need:
 
 and only few of those properties are relevat for the test and yet *all* of them are needed... You *probably* have some functionally to abstract (and stub).
 
+----
+
 Hamcrest vs FEST-Assert - functionally they're both the same 
 =============================================================
 
@@ -449,3 +452,94 @@ But devil's in the details
 ==========================
 
 Thanks to fluent interface style invocation **FEST-Assert** gives us instant feedback about matchers available for given entity. At the same time finding available matchers with **Hamcrest** can be very frustrating... 
+
+----
+
+
+Exception testing idioms - expected paramter in @Test anotation or @Rule annotation
+===================================================================================
+
+     .. code:: java
+
+        @Test(expected = CountryNotFoundException.class)
+        public void givenNonExistingCountryRaiseCountryNotFoundException() {
+            GDPCollaborator.prepare();
+            GDPService.getIncomeFor("Seven Kingdoms");
+        }
+
++ short and straightforward
+
+- but impossible to verify from where the Exception has been thrown
+
+    .. code:: java
+
+        @Rule
+        public ExpectedException exception = ExpectedException.none();
+
+        @Test
+        public void givenNonExistingCountryRaiseCountryNotFoundException() {
+            thrown.expect(CountryNotFoundException.class);
+            thrown.expectMessage("Not a country");
+            GDPCollaborator.prepare();
+            GDPService.getIncomeFor("Seven Kingdoms");
+        }
+
++ bit more verbose but handy in complicated setups 
+
+----
+
+Exception testing idioms - try catch pattern
+============================================
+
+    .. code:: java
+
+        @Test 
+        public void givenNonExistingCountryRaiseCountryNotFoundException() {
+            GDPCollaborator.prepare();
+            
+            try {
+                GDPService.getIncomeFor("Seven Kingdoms");
+                fail("CountryNotFoundException expected.");
+            } catch (CountryNotFoundException expected) {
+                // additional assertions
+            } catch (Exception e) {
+                fail("Unexpected exception " + e + " expected: CountryNotFoundException");
+            }
+        }
+
++ in contrary to previous examples we can easily pinpoint exception we mean to test and verify that no other exceptions where thrown
+
+- it looks ugly isn't it?
+
+----
+
+Exception testing idioms - use catch-exception library
+======================================================
+    
+    .. code:: java
+
+        @Test 
+        public void givenNonExistingCountryRaiseCountryNotFoundException() {
+            GDPCollaborator.prepare() 
+
+            GDPService.getIncomeFor("Seven Kingdoms")
+
+            then(caughtException())
+                .isInstanceOf(CountryNotFoundException.class)
+                .hasMessage("Runtime exception occurred")
+                .hasMessageStartingWith("Runtime")
+                .hasMessageEndingWith("occured")
+                .hasMessageContaining("exception")
+                .hasNoCause();
+        }
+
++ clean, robust follows Arrange Act Assert like testing conventions
+
++ this is my current way to go when testing exceptions
+
+----
+
+
+Thank you
+=========
+
