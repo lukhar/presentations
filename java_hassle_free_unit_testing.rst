@@ -349,7 +349,7 @@ Faking it with Mockito
 
 * use :code:`MockitoJUnitRunner`, :code:`InjectMocks` and :code:`Mock` annotations, most of the time you (really) don't need :code:`setUp`, :code:`tearDown` methods
 
-* :code:`Mock` annotation alone doesn't give anything... (seen few usages in our code)
+* :code:`Mock` annotation alone doesn't give you anything... (seen few usages in our code)
 
 * two styles of stubbing:
     * traditional: :code:`when`, :code:`thenReturn`, :code:`thenThrow`
