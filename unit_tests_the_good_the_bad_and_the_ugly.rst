@@ -29,7 +29,7 @@ Can you tell what exactly I’m testing here?
     from processor import TracksProcessor, Track
     from nose.tools import assert_equals
 
-    class TestTracksProcessor:
+    class TestTracksProcessor(object):
 
         def test_aa001(self):
             tracks = [Track('test1', 0.5), Track('test2', 0.3),
@@ -50,7 +50,7 @@ It's nothing fancy really...
 
     Track = collections.namedtuple('Track', 'name, popularity')
 
-    class TracksProcessor:
+    class TracksProcessor(object):
         def __init__(self, top_amount):
             self._top_amount = top_amount
 
@@ -85,7 +85,7 @@ How about making it more readable then?
     from processor import TracksProcessor, Track
     from nose.tools import assert_equals
 
-    class TestTracksProcessor:
+    class TestTracksProcessor(object):
         def test_should_retrieve_top_two_popular_tracks(self):
             # given
             tracks = [Track(name='Genesis', popularity=0.5),
@@ -122,7 +122,7 @@ Yeah I know it looks nice on paper but quite often we have to deal with this...
     import util.cache
     import db
 
-    class TrackService:
+    class TrackService(object):
 
         def similar_tracks(self, track_id):
             if cache.contains(track_id):
@@ -133,7 +133,7 @@ Yeah I know it looks nice on paper but quite often we have to deal with this...
 
                 return tracks
 
-but in much more elaborated form of course ;)
+but in much more elaborated form of course;)
 
 ----
 
@@ -170,9 +170,8 @@ Patching internal representation
     from trackservice import TrackService
     from mock import patch
     from nose.tools import assert_equals
-    from nose.tools import assert_true
 
-    class TestTrackService:
+    class TestTrackService(object):
 
         @patch('trackservice.db')
         @patch('trackservice.cache')
@@ -188,7 +187,6 @@ Patching internal representation
 
             # then
             assert_equals(similar_tracks, expected_tracks)
-            assert_true(cache.add.called)
 
 ----
 
@@ -244,7 +242,7 @@ Can we avoid patching? How about refactoring our class a little bit?
 
 .. code:: python
 
-    class TrackService:
+    class TrackService(object):
 
         def __init__(self, cache, db):
             self._cache = cache
@@ -266,7 +264,7 @@ And fixing tests
 
 .. code:: python
 
-    class TestTrackService:
+    class TestTrackService(object):
 
         def setup(self):
             self.cache_mock = Mock()
@@ -285,7 +283,6 @@ And fixing tests
 
             # then
             assert_equals(similar_tracks, expected_tracks)
-            assert_true(self.cache_mock.add.called)
 
 ----
 
@@ -313,17 +310,33 @@ Be descriptive, names like:
 
 doesn't really tell you much.
 
+----
+
+Use named arguments and named variables to avoid "magic numbers"
+================================================================
 
 Invocations like:
 
 .. code:: python
 
-    PlaylistGenerator(100, 54, False)
-    calculate_salary(4000, 0.3, 2.3)
+    PlaylistGenerator(100, False)
+    calculate_salary(4000, 0.3, 0.2)
 
-unnecessarily force reader to look into implementation.
+vs
 
-Testing privates:
+.. code:: python
+
+    PlaylistGenerator(track_amount=100, repetitions_allowed=False)
+
+    salary, tax_ratio, insurance_ratio = 4000, 0.3, 0.2
+    calculate_salary(salary, tax_ratio, insurance_ratio)
+
+Which would you prefer to debug?
+
+----
+
+Never test privates
+===================
 
 .. code:: python
 
@@ -362,6 +375,8 @@ Walking happy path
 ==================
 
 .. code:: python
+
+    from math import division
 
     def test_division():
         assert_equals(2, divide(4,2))
